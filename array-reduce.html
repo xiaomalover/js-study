@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+
+<button onclick="alert(testTranslation('greetings.hello.english'))">翻译(greetings.hello.english)</button>
+<button onclick="alert(testSum())">求和(1,2,3,4,5)</button>
+
+<script type="text/javascript">
+    /**
+     数组函数reduce的详细用法
+
+     调用语法：arr.reduce(callback,[initialValue])
+
+     参数1【必需】: callback:函数中包含四个参数
+     - previousCalculateValue【必需】 （上一次调用回调返回的值，或者是提供的初始值（initialValue））
+     - currentArrayItemValue【必需】 （数组中当前被处理的元素）
+     - currentArrayItemIndex【可选】 （当前元素在数组中的索引)
+     - array【可选】 （调用的数组）
+
+     参数2【可选】: initialValue （作为第一次调用 callback 的第一个参数。）
+     **/
+
+
+    /**
+     * 示例一：翻译
+     * @param key
+     * @returns {*|string}
+     */
+    function testTranslation(key) {
+        let msg = "Can't understand";
+
+        let initialValue = {
+            greetings: {
+                hello: {
+                    english: "world"
+                }
+            }
+        }
+
+        msg = key.split('.').reduce((previousCalculateValue, currentArrayItemValue, currentArrayItemIndex, array) => {
+            console.log(previousCalculateValue)
+            console.log(currentArrayItemValue)
+            console.log(currentArrayItemIndex)
+            console.log(array)
+            if (previousCalculateValue) return previousCalculateValue[currentArrayItemValue]
+        }, initialValue)
+
+        return msg;
+    }
+
+    /**
+     * 示例二：求和
+     * @returns {number}
+     */
+    function testSum() {
+
+        return Array.from([1,2,3,4,5]).reduce((previousCalculateValue, currentArrayItemValue) => {
+            return previousCalculateValue + currentArrayItemValue
+        }, 0)
+
+    }
+</script>
+
+</body>
+</html>
