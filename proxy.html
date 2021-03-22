@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Proxy</title>
+</head>
+<body>
+
+<script type="text/javascript">
+    const dinner = {
+        meal: 'tacos'
+    }
+
+    const handler = {
+        get(target, prop) {
+            console.log('intercepted!')
+            return target[prop]
+        }
+    }
+
+    const proxy = new Proxy(dinner, handler)
+    console.log(proxy.meal)
+
+
+    const lunch = {
+        meal: 'bread'
+    }
+
+    const handler1 = {
+        get(target, prop, receiver) {
+            console.log(receiver)
+            return Reflect.get(...arguments)
+        }
+    }
+    const proxy1 = new Proxy(lunch, handler1)
+    console.log(proxy1.meal)
+
+
+    /**
+     * 输出如下
+     * intercepted!
+     * tacos
+     * Proxy{meal: "bread"}
+     * bread
+     */
+</script>
+
+</body>
+</html>
