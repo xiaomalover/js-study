@@ -8,7 +8,7 @@
         });
     }
     /***    等价于 *********/
-    async function takeLongTime1() {
+    async function takeLongTime_s() {
         sleep(3000)
         return "long_time_value"
     }
@@ -17,14 +17,13 @@
     }
 
     function test() {
-        takeLongTime().then(
-            function (v) {
+        takeLongTime().then(v => {
                 console.log("got", v);
             });
     }
     /** 等价于**********/
     async function test1() {
-        let a = await takeLongTime()
+        let a = await takeLongTime_s()
         console.log("got", a)
     }
 
