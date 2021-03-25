@@ -1,0 +1,137 @@
+<div id="content"
+     style="height:150px;line-height:150px;text-align:center; color: #fff;background-color:#ccc;font-size:80px;"></div>
+
+<script>
+    function takeLongTime() {
+        return new Promise(resolve => {
+            setTimeout(() => resolve("long_time_value"), 3000);
+        });
+    }
+    /***    等价于 *********/
+    async function takeLongTime1() {
+        sleep(3000)
+        return "long_time_value"
+    }
+    function sleep(d) {
+        for (let t = Date.now(); Date.now() - t <= d;) ;
+    }
+
+    function test() {
+        takeLongTime().then(
+            function (v) {
+                console.log("got", v);
+            });
+    }
+    /** 等价于**********/
+    async function test1() {
+        let a = await takeLongTime()
+        console.log("got", a)
+    }
+
+    test();
+    test1();
+
+
+    //以下例子展示了await的优势
+    /**
+     * 传入参数 n，表示这个函数执行的时间（毫秒）
+     * 执行的结果是 n + 200，这个值将用于下一步骤
+     */
+    function takeLongTime1(n) {
+        return new Promise(resolve => {
+            setTimeout(() => resolve(n + 200), n);
+        });
+    }
+
+
+    function step1(n) {
+        console.log(`step1 with ${n}`);
+        return takeLongTime1(n);
+    }
+
+    function step2(n) {
+        console.log(`step2 with ${n}`);
+        return takeLongTime1(n);
+    }
+
+    function step3(n) {
+        console.log(`step3 with ${n}`);
+        return takeLongTime1(n);
+    }
+
+    function doIt() {
+        console.time("doIt");
+        const time1 = 300;
+        step1(time1)
+            .then(time2 => step2(time2))
+            .then(time3 => step3(time3))
+            .then(result => {
+                console.log(`result is ${result}`);
+                console.timeEnd("doIt");
+            });
+    }
+    /** 等价于**********/
+    async function doIt1() {
+        console.time("doIt1");
+        const time1 = 300;
+        const time2 = await step1(time1);
+        const time3 = await step2(time2);
+        const result = await step3(time3);
+        console.log(`result is ${result}`);
+        console.timeEnd("doIt1");
+    }
+
+    doIt();
+    doIt1();
+
+
+    function step_1(n) {
+        console.log(`step1 with ${n}`);
+        return takeLongTime1(n);
+    }
+
+    function step_2(m, n) {
+        console.log(`step2 with ${m} and ${n}`);
+        return takeLongTime1(m + n);
+    }
+
+    function step_3(k, m, n) {
+        console.log(`step3 with ${k}, ${m} and ${n}`);
+        return takeLongTime1(k + m + n);
+    }
+
+    async function doIt_() {
+        console.time("doIt_");
+        const time1 = 300;
+        const time2 = await step_1(time1);
+        const time3 = await step_2(time1, time2);
+        const result = await step_3(time1, time2, time3);
+        console.log(`result is ${result}`);
+        console.timeEnd("doIt_");
+    }
+    /** 等价于**********/
+    function doIt_1() {
+        console.time("doIt_1");
+        const time1 = 300;
+        step_1(time1)
+            .then(time2 => {
+                return step_2(time1, time2)
+                    .then(time3 => [time1, time2, time3]);
+            })
+            .then(times => {
+                const [time1, time2, time3] = times;
+                return step_3(time1, time2, time3);
+            })
+            .then(result => {
+                console.log(`result is ${result}`);
+                console.timeEnd("doIt_1");
+            });
+    }
+
+    doIt_();
+    doIt_1();
+
+    /**
+     * 出处   https://segmentfault.com/a/1190000007535316
+     */
+</script>
